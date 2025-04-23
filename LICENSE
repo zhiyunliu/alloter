@@ -1,6 +1,8 @@
 MIT License
 
-Copyright (c) 2024 zhiyun
+Copyright (c) 2014 Manuel Martínez and Gin contributors
+Copyright (c) 2024 zhiyunliu
+
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9,13 +11,81 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
+
+---
+
+### 第三方依赖许可证声明
+
+This project incorporates the following third-party libraries:
+
+1. **github.com/zhiyunliu/stack** (v1.10.1)  
+   License: [MIT](https://github.com/zhiyunliu/stack/blob/v1.10.1/LICENSE)  
+   Copyright (c) [作者/组织]  
+
+2. **github.com/agiledragon/gomonkey/v2** (v2.11.0)  
+   License: [MIT](https://github.com/agiledragon/gomonkey/blob/v2.11.0/LICENSE)  
+   Copyright (c) 2021 agiledragon  
+
+3. **github.com/go-playground/assert/v2** (v2.2.0)  
+   License: [MIT](https://github.com/go-playground/assert/blob/v2.2.0/LICENSE)  
+   Copyright (c) 2017 Go Playground  
+
+4. **github.com/google/uuid** (v1.3.0)  
+   License: [BSD-3-Clause](https://github.com/google/uuid/blob/v1.3.0/LICENSE)  
+   Copyright (c) 2009,2014 Google Inc.  
+   
+
+5. **github.com/orcaman/concurrent-map/v2** (v2.0.1)  
+   License: [MIT](https://github.com/orcaman/concurrent-map/blob/v2.0.1/LICENSE)  
+   Copyright (c) 2015 Orcaman  
+
+6. **github.com/shopspring/decimal** (v1.3.1)  
+   License: [MIT](https://github.com/shopspring/decimal/blob/v1.3.1/LICENSE)  
+   Copyright (c) 2014 Spring, Inc.  
+
+7. **github.com/stretchr/testify** (v1.3.0)  
+   License: [MIT](https://github.com/stretchr/testify/blob/v1.3.0/LICENSE)  
+   Copyright (c) 2012-2020 Mat Ryer and Tyler Bunnell  
+
+8. **golang.org/x/sync** (v0.11.0)  
+   License: [BSD-3-Clause](https://cs.opensource.google/go/x/sync/+/master:LICENSE)  
+   Copyright (c) 2009 The Go Authors  
+
+9. **golang.org/x/text** (v0.3.7)  
+   License: [BSD-3-Clause](https://cs.opensource.google/go/x/text/+/master:LICENSE)  
+   Copyright (c) 2009 The Go Authors  
+
+---
+
+### 间接依赖声明
+The following indirect dependencies are used:
+
+- **github.com/davecgh/go-spew** (v1.1.1)  
+  License: [ISC](https://github.com/davecgh/go-spew/blob/v1.1.1/LICENSE)  
+  Copyright (c) 2012-2016 Dave Collins  
+
+- **github.com/pmezard/go-difflib** (v1.0.0)  
+  License: [BSD-3-Clause](https://github.com/pmezard/go-difflib/blob/v1.0.0/LICENSE)  
+  Copyright (c) 2013, Patrick Mezard  
+
+---
+
+### 注意事项
+1. **BSD-3-Clause 条款**：使用 `google/uuid`、`golang.org/x/*` 等库时需满足：  
+   - 保留原始版权声明  
+   - 不得使用作者名进行宣传  
+   - 在衍生作品中注明许可证  
+
+2. **源代码文件**：若直接复制了依赖项的代码文件，需在文件头部保留其原始版权注释。

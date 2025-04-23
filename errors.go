@@ -9,8 +9,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/zhiyunliu/golibs/xjson"
 )
 
 // ErrorType is an unsigned 64-bit error code as defined in the gin spec.
@@ -78,7 +76,7 @@ func (msg *Error) JSON() interface{} {
 
 // MarshalJSON implements the json.Marshaller interface.
 func (msg *Error) MarshalJSON() ([]byte, error) {
-	return xjson.Marshal(msg.JSON())
+	return json.Marshal(msg.JSON())
 }
 
 // Error implements the error interface.
@@ -125,10 +123,11 @@ func (a errorMsgs) Last() *Error {
 
 // Errors returns an array with all the error messages.
 // Example:
-// 		c.Error(errors.New("first"))
-// 		c.Error(errors.New("second"))
-// 		c.Error(errors.New("third"))
-// 		c.Errors.Errors() // == []string{"first", "second", "third"}
+//
+//	c.Error(errors.New("first"))
+//	c.Error(errors.New("second"))
+//	c.Error(errors.New("third"))
+//	c.Errors.Errors() // == []string{"first", "second", "third"}
 func (a errorMsgs) Errors() []string {
 	if len(a) == 0 {
 		return nil

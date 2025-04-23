@@ -10,8 +10,6 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-
-	"github.com/gin-gonic/gin/render"
 )
 
 const defaultMultipartMemory = 32 << 20 // 32 MB
@@ -140,9 +138,7 @@ type Engine struct {
 	// Enable h2c support.
 	UseH2C bool
 
-	delims           render.Delims
 	secureJSONPrefix string
-	HTMLRender       render.HTMLRender
 	FuncMap          template.FuncMap
 	allNoRoute       HandlersChain
 	allNoMethod      HandlersChain
@@ -185,7 +181,6 @@ func New() *Engine {
 		UnescapePathValues:     true,
 		MaxMultipartMemory:     defaultMultipartMemory,
 		trees:                  make(methodTrees, 0, 9),
-		delims:                 render.Delims{Left: "{{", Right: "}}"},
 		secureJSONPrefix:       "while(1);",
 		trustedProxies:         []string{"0.0.0.0/0"},
 		trustedCIDRs:           defaultTrustedCIDRs,
@@ -199,7 +194,6 @@ func New() *Engine {
 
 // Default returns an Engine instance with the Logger and Recovery middleware already attached.
 func Default() *Engine {
-	debugPrintWARNINGDefault()
 	engine := New()
 	return engine
 }
@@ -208,60 +202,6 @@ func (engine *Engine) allocateContext() *Context {
 	v := make(Params, 0, engine.maxParams)
 	skippedNodes := make([]skippedNode, 0, engine.maxSections)
 	return &Context{engine: engine, params: &v, skippedNodes: &skippedNodes}
-}
-
-// Delims sets template left and right delims and returns an Engine instance.
-func (engine *Engine) Delims(left, right string) *Engine {
-	engine.delims = render.Delims{Left: left, Right: right}
-	return engine
-}
-
-// SecureJsonPrefix sets the secureJSONPrefix used in Context.SecureJSON.
-func (engine *Engine) SecureJsonPrefix(prefix string) *Engine {
-	engine.secureJSONPrefix = prefix
-	return engine
-}
-
-// LoadHTMLGlob loads HTML files identified by glob pattern
-// and associates the result with HTML renderer.
-func (engine *Engine) LoadHTMLGlob(pattern string) {
-	left := engine.delims.Left
-	right := engine.delims.Right
-	templ := template.Must(template.New("").Delims(left, right).Funcs(engine.FuncMap).ParseGlob(pattern))
-
-	if IsDebugging() {
-		debugPrintLoadTemplate(templ)
-		engine.HTMLRender = render.HTMLDebug{Glob: pattern, FuncMap: engine.FuncMap, Delims: engine.delims}
-		return
-	}
-
-	engine.SetHTMLTemplate(templ)
-}
-
-// LoadHTMLFiles loads a slice of HTML files
-// and associates the result with HTML renderer.
-func (engine *Engine) LoadHTMLFiles(files ...string) {
-	if IsDebugging() {
-		engine.HTMLRender = render.HTMLDebug{Files: files, FuncMap: engine.FuncMap, Delims: engine.delims}
-		return
-	}
-
-	templ := template.Must(template.New("").Delims(engine.delims.Left, engine.delims.Right).Funcs(engine.FuncMap).ParseFiles(files...))
-	engine.SetHTMLTemplate(templ)
-}
-
-// SetHTMLTemplate associate a template with HTML renderer.
-func (engine *Engine) SetHTMLTemplate(templ *template.Template) {
-	if len(engine.trees) > 0 {
-		debugPrintWARNINGSetHTMLTemplate()
-	}
-
-	engine.HTMLRender = render.HTMLProduction{Template: templ.Funcs(engine.FuncMap)}
-}
-
-// SetFuncMap sets the FuncMap used for template.FuncMap.
-func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
-	engine.FuncMap = funcMap
 }
 
 // NoRoute adds handlers for NoRoute. It returns a 404 code by default.
@@ -298,8 +238,6 @@ func (engine *Engine) addRoute(method, path string, handlers HandlersChain) {
 	assert1(path[0] == '/', "path must begin with '/'")
 	assert1(method != "", "HTTP method can not be empty")
 	assert1(len(handlers) > 0, "there must be at least one handler")
-
-	debugPrintRoute(method, path, handlers)
 
 	root := engine.trees.get(method)
 	if root == nil {
@@ -531,11 +469,7 @@ func serveError(c *Context, code int, defaultMessage []byte) {
 		return
 	}
 	if c.Writer.Status() == code {
-		c.Writer.Header()["Content-Type"] = MIMEPlain
-		_, err := c.Writer.Write(defaultMessage)
-		if err != nil {
-			debugPrint("cannot write message to writer during serve error: %v", err)
-		}
+		_, _ = c.Writer.Write(defaultMessage)
 		return
 	}
 	//c.writermem.WriteHeaderNow()

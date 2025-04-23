@@ -6,35 +6,15 @@ package alloter
 
 import (
 	"errors"
-	"io"
 	"log"
 	"math"
-	"mime/multipart"
 	"net"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/gin-gonic/gin/binding"
 )
-
-// Content-Type MIME of the most common data formats.
-const (
-	MIMEJSON              = binding.MIMEJSON
-	MIMEHTML              = binding.MIMEHTML
-	MIMEXML               = binding.MIMEXML
-	MIMEXML2              = binding.MIMEXML2
-	MIMEPlain             = binding.MIMEPlain
-	MIMEPOSTForm          = binding.MIMEPOSTForm
-	MIMEMultipartPOSTForm = binding.MIMEMultipartPOSTForm
-	MIMEYAML              = binding.MIMEYAML
-)
-
-// BodyBytesKey indicates a default body bytes key.
-const BodyBytesKey = "_gin-gonic/gin/bodybyteskey"
 
 // abortIndex represents a typical value used in abort functions.
 const abortIndex int8 = math.MaxInt8 >> 1
@@ -140,9 +120,10 @@ func (c *Context) Handler() HandlerFunc {
 
 // FullPath returns a matched route full path. For not found routes
 // returns an empty string.
-//     router.GET("/user/:id", func(c *gin.Context) {
-//         c.FullPath() == "/user/:id" // true
-//     })
+//
+//	router.GET("/user/:id", func(c *gin.Context) {
+//	    c.FullPath() == "/user/:id" // true
+//	})
 func (c *Context) FullPath() string {
 	return c.fullPath
 }
@@ -360,10 +341,11 @@ func (c *Context) GetStringMapStringSlice(key string) (smss map[string][]string)
 
 // Param returns the value of the URL param.
 // It is a shortcut for c.Params.ByName(key)
-//     router.GET("/user/:id", func(c *gin.Context) {
-//         // a GET request to /user/john
-//         id := c.Param("id") // id == "john"
-//     })
+//
+//	router.GET("/user/:id", func(c *gin.Context) {
+//	    // a GET request to /user/john
+//	    id := c.Param("id") // id == "john"
+//	})
 func (c *Context) Param(key string) string {
 	return c.Params.ByName(key)
 }
@@ -390,43 +372,6 @@ func (c *Context) get(m map[string][]string, key string) (map[string]string, boo
 		}
 	}
 	return dicts, exist
-}
-
-// SaveUploadedFile uploads the form file to specific dst.
-func (c *Context) SaveUploadedFile(file *multipart.FileHeader, dst string) error {
-	src, err := file.Open()
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, src)
-	return err
-}
-
-// BindUri binds the passed struct pointer using binding.Uri.
-// It will abort the request with HTTP 400 if any error occurs.
-func (c *Context) BindUri(obj interface{}) error {
-	if err := c.ShouldBindUri(obj); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err).SetType(ErrorTypeBind) // nolint: errcheck
-		return err
-	}
-	return nil
-}
-
-// ShouldBindUri binds the passed struct pointer using the specified binding engine.
-func (c *Context) ShouldBindUri(obj interface{}) error {
-	m := make(map[string][]string)
-	for _, v := range c.Params {
-		m[v.Key] = []string{v.Value}
-	}
-	return binding.Uri.BindUri(m, obj)
 }
 
 // ClientIP implements one best effort algorithm to return the real client IP.

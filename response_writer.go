@@ -8,7 +8,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/zhiyunliu/golibs/xtypes"
+	"github.com/zhiyunliu/golibs/engine"
 )
 
 const (
@@ -29,7 +29,7 @@ type ResponseWriter interface {
 	Written() bool
 
 	WriteHeader(code int)
-	Header() xtypes.SMap
+	Header() engine.Header
 	Write(p []byte) (n int, err error)
 	// Writes the string into the response body.
 	WriteString(string) (int, error)
@@ -52,9 +52,6 @@ func (w *responseWriter) reset(writer ResponseWriter) {
 
 func (w *responseWriter) WriteHeader(code int) {
 	if code > 0 && w.status != code {
-		if w.Written() {
-			debugPrint("[WARNING] Headers were already written. Wanted to override status code %d with %d", w.status, code)
-		}
 		w.status = code
 	}
 }
@@ -70,7 +67,7 @@ func (w *responseWriter) WriteString(s string) (n int, err error) {
 	w.size += n
 	return
 }
-func (w *responseWriter) Header() xtypes.SMap {
+func (w *responseWriter) Header() engine.Header {
 	return w.writer.Header()
 }
 
